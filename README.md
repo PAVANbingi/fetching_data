@@ -563,6 +563,216 @@ export default function Page() {
 		</div>
 	);
 }
+===============================
+Name	Email	Phone	CourseSelection	NearestBranch	Timestamp and page 1 ---> Google sheet url----> use it in App script 
+
+## fetching data with time stamp and pop up
+===================
+=============
+============
+Here is the corrected and organized version of your code with some improvements:
+
+```tsx
+"use client";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import { FaAnglesRight, FaAnglesLeft } from "react-icons/fa6";
+
+function PopUpForm() {
+	const [showForm, setShowForm] = useState(false);
+	const [isClosing, setIsClosing] = useState(false);
+	const [formData, setFormData] = useState({
+		name: "",
+		email: "",
+		phone: "",
+		course: "",
+		nearestBranch: "",
+	});
+
+	// Handle form close
+	const closeForm = () => {
+		setIsClosing(true);
+		setTimeout(() => {
+			setShowForm(false);
+			setIsClosing(false);
+		}, 900);
+	};
+
+	// Handle form open
+	const openForm = () => {
+		setShowForm(true);
+		setIsClosing(false);
+	};
+
+	// Handle form input changes
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+		const { name, value } = e.target;
+		setFormData({ ...formData, [name]: value });
+	};
+
+	// Handle form submission
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		try {
+			const response = await fetch(
+				"https://script.google.com/macros/s/AKfycbzjRk7uoeuBaoTM8Ly1RP25KEh1r6POhe6If_tCB-SxbmC-lpoWKtMklXL22k67YCHw/exec",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: new URLSearchParams({
+						Name: formData.name,
+						Email: formData.email,
+						Phone: formData.phone,
+						CourseSelection: formData.course,
+						NearestBranch: formData.nearestBranch,
+						Timestamp: new Date().toISOString(),
+					}).toString(),
+				}
+			);
+
+			if (response.ok) {
+				alert("Enquiry successfully submitted!");
+				setFormData({
+					name: "",
+					email: "",
+					phone: "",
+					course: "",
+					nearestBranch: "",
+				});
+			} else {
+				alert("There was an error submitting your enquiry.");
+			}
+		} catch (error) {
+			console.error("Error submitting the form", error);
+			alert("An error occurred while submitting the form.");
+		}
+	};
+
+	return (
+		<div
+			className={
+				"fixed items-center -right-[375px] bottom-[10%] flex z-20 rounded-lg" +
+				(showForm ? " animate-slideIn" : "") +
+				(isClosing ? " animate-slideOut" : "")
+			}
+		>
+			<div
+				className="flex items-center h-fit gap-x-4 bg-white text-primary font-medium p-3 cursor-pointer text-sm shadow-2xl border-primary border"
+				style={{ writingMode: "vertical-rl", textOrientation: "upright" }}
+				onClick={showForm ? closeForm : openForm}
+			>
+				<span>ENQUIRY HERE</span>
+				{showForm ? <FaAnglesRight size={15} /> : <FaAnglesLeft size={15} />}
+			</div>
+
+			<div className="bg-primary p-6">
+				<form className="text-xl flex flex-col gap-y-5" onSubmit={handleSubmit}>
+					<h2 className="text-2xl text-white font-medium">Enroll Here for the Course</h2>
+					<div>
+						<input
+							type="text"
+							name="name"
+							id="name"
+							placeholder="Your Name"
+							className="p-2 outline-none w-full rounded-md"
+							value={formData.name}
+							onChange={handleInputChange}
+							required
+						/>
+					</div>
+					<div>
+						<input
+							type="email"
+							name="email"
+							id="email"
+							placeholder="Your Email"
+							className="p-2 outline-none w-full rounded-md"
+							value={formData.email}
+							onChange={handleInputChange}
+							required
+						/>
+					</div>
+					<div>
+						<input
+							type="tel"
+							name="phone"
+							id="phone"
+							placeholder="Your Phone"
+							className="p-2 outline-none w-full rounded-md"
+							value={formData.phone}
+							onChange={handleInputChange}
+							required
+						/>
+					</div>
+					<div>
+						<select
+							name="course"
+							id="course"
+							className="p-2 outline-none w-full rounded-md"
+							value={formData.course}
+							onChange={handleInputChange}
+							required
+						>
+							<option value="" disabled>
+								Diploma in
+							</option>
+							<option value="Cabin Crew">Cabin Crew</option>
+							<option value="Ground Staff">Ground Staff</option>
+							<option value="Hospitality Management">Hospitality Management</option>
+							<option value="Travel and Tourism Management">
+								Travel and Tourism Management
+							</option>
+						</select>
+					</div>
+					<div>
+						<select
+							name="nearestBranch"
+							id="nearest-branch"
+							className="p-2 outline-none w-full rounded-md"
+							value={formData.nearestBranch}
+							onChange={handleInputChange}
+							required
+						>
+							<option value="" disabled>
+								Nearest Branch
+							</option>
+							<option value="Andheri">Andheri</option>
+							<option value="Hyderabad">Hyderabad</option>
+							<option value="Saki Naka">Saki Naka</option>
+							<option value="Vashi">Vashi</option>
+						</select>
+					</div>
+					<div className="flex justify-center">
+						<button
+							className="mt-3 bg-white text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded-lg w-[200px] transition-all"
+							type="submit"
+						>
+							Book Now
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+}
+
+export default PopUpForm;
+```
+
+### Key improvements:
+1. **Optimized the `closeForm` function** to simplify the state update sequence.
+2. Added **`async` and `await`** for the form submission to handle it properly.
+3. Used consistent and semantic code formatting for better readability.
+
+
+
+
+
+
+
 ```
 
 ### Changes Made:

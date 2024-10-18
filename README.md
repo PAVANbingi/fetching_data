@@ -19,36 +19,36 @@ function doPost(e){
 
 
 
-###react code 
+###react/.tsx code
 
 
 "use client";
 import React, { useState } from "react";
 
 export default function App() {
-  const [status, setStatus] = useState(""); // To handle submission status
+  const [status, setStatus] = useState<string>(""); // To handle submission status
 
-  function Submit(e) {
+  // Function to handle form submission
+  function Submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading"); // Set status to loading before form submission
 
-    const formEle = document.querySelector("form");
-    const formDatab = new FormData(formEle);
+    const formEle = e.currentTarget; // Use the event to get the form element
+    const formData = new FormData(formEle);
 
-    fetch(
-      "https://script.google.com/macros/s/AKfycbznuPPRN2k4RBx-CYUmKg2qjKE1Lr-lj1ycgYEEZJ_U0TK1Attt405UN5aSlINJkp3c/exec",
+    fetch("https://script.google.com/macros/s/AKfycbznuPPRN2k4RBx-CYUmKg2qjKE1Lr-lj1ycgYEEZJ_U0TK1Attt405UN5aSlINJkp3c/exec",
       {
         method: "POST",
-        body: formDatab,
+        body: formData,
       }
     )
       .then((res) => {
         if (res.ok) {
           // If the response is successful (status 200-299)
           setStatus("success");
-          return res.text(); // Returning text in case it's not JSON
+          formEle.reset(); // Clear form fields after successful submission
+          return res.text(); // Return text in case it's not JSON
         } else {
-          // If the response is not successful (status outside 200-299)
           setStatus("error");
           throw new Error("Network response was not ok.");
         }
@@ -65,13 +65,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-6">
       <h1 className="text-3xl font-bold text-white mb-4">Contact Us</h1>
-      <h2 className="text-lg text-gray-300 mb-8">
-       Testing......
-      </h2>
+      <h2 className="text-lg text-gray-300 mb-8">Testing......</h2>
       <div className="w-full max-w-md">
         <form
           className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4"
-          onSubmit={(e) => Submit(e)}
+          onSubmit={Submit} // TSX way of handling form submission
         >
           <input
             className="w-full p-3 rounded-md bg-gray-700 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -91,7 +89,7 @@ export default function App() {
             className="w-full p-3 rounded-md bg-gray-700 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Your Message"
             name="Message"
-            rows="4"
+            rows={4}
             required
           ></textarea>
           <button
@@ -121,3 +119,4 @@ export default function App() {
     </div>
   );
 }
+
